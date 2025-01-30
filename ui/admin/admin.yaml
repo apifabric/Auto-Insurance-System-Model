@@ -1,0 +1,355 @@
+about:
+  date: January 30, 2025 22:42:39
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 11
+  number_tables: 12
+info_toggle_checked: true
+resources:
+  Agent:
+    attributes:
+    - label: ' first_name*'
+      name: first_name
+      required: true
+      search: true
+      sort: true
+    - name: last_name
+      required: true
+    - name: id
+    description: Represents an insurance agent who manages applications and policies.
+    info_list: Represents an insurance agent who manages applications and policies.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - agent_id
+      name: AgentAssignmentList
+      resource: AgentAssignment
+    type: Agent
+    user_key: first_name
+  AgentAssignment:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: agent_id
+    - name: insurance_application_id
+    - name: assignment_date
+      required: true
+      type: DATE
+    description: Represents the assignment of agents to specific insurance applications.
+    info_list: Represents the assignment of agents to specific insurance applications.
+    tab_groups:
+    - direction: toone
+      fks:
+      - agent_id
+      name: agent
+      resource: Agent
+    - direction: toone
+      fks:
+      - insurance_application_id
+      name: insurance_application
+      resource: InsuranceApplication
+    type: AgentAssignment
+    user_key: id
+  Billing:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: premium_id
+    - name: billing_date
+      required: true
+      type: DATE
+    - name: amount_due
+      required: true
+    description: Details regarding billing associated with a premium.
+    info_list: Details regarding billing associated with a premium.
+    tab_groups:
+    - direction: toone
+      fks:
+      - premium_id
+      name: premium
+      resource: Premium
+    type: Billing
+    user_key: id
+  Claim:
+    attributes:
+    - label: ' description*'
+      name: description
+      search: true
+      sort: true
+    - name: policy_id
+    - name: claim_date
+      required: true
+      type: DATE
+    - name: status
+      required: true
+    - name: id
+    description: Represents a claim made against a policy.
+    info_list: Represents a claim made against a policy.
+    tab_groups:
+    - direction: toone
+      fks:
+      - policy_id
+      name: policy
+      resource: Policy
+    type: Claim
+    user_key: description
+  Coverage:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: policy_id
+    - name: Type
+      required: true
+    - name: limit
+      required: true
+    - name: deductible
+    description: Represents insurance coverage details included in a policy.
+    info_list: Represents insurance coverage details included in a policy.
+    tab_groups:
+    - direction: toone
+      fks:
+      - policy_id
+      name: policy
+      resource: Policy
+    type: Coverage
+    user_key: id
+  Customer:
+    attributes:
+    - label: ' first_name*'
+      name: first_name
+      required: true
+      search: true
+      sort: true
+    - name: last_name
+      required: true
+    - name: birthdate
+      type: DATE
+    - name: email
+    - name: id
+    description: Represents a customer who can apply for auto insurance.
+    info_list: Represents a customer who can apply for auto insurance.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - claimant_id
+      name: IncidentReportList
+      resource: IncidentReport
+    - direction: tomany
+      fks:
+      - customer_id
+      name: InsuranceApplicationList
+      resource: InsuranceApplication
+    - direction: tomany
+      fks:
+      - customer_id
+      name: VehicleList
+      resource: Vehicle
+    type: Customer
+    user_key: first_name
+  Incident:
+    attributes:
+    - label: ' description*'
+      name: description
+      search: true
+      sort: true
+    - name: incident_date
+      required: true
+      type: DATE
+    - name: id
+    description: Represents an incident for which an insurance claim can be made.
+    info_list: Represents an incident for which an insurance claim can be made.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - incident_id
+      name: IncidentReportList
+      resource: IncidentReport
+    type: Incident
+    user_key: description
+  IncidentReport:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: claimant_id
+    - name: incident_id
+    - name: report_date
+      required: true
+      type: DATE
+    description: A report filed for an associated incident.
+    info_list: A report filed for an associated incident.
+    tab_groups:
+    - direction: toone
+      fks:
+      - claimant_id
+      name: claimant
+      resource: Customer
+    - direction: toone
+      fks:
+      - incident_id
+      name: incident
+      resource: Incident
+    type: IncidentReport
+    user_key: id
+  InsuranceApplication:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+    - name: application_date
+      required: true
+      type: DATE
+    - name: status
+      required: true
+    description: Represents the auto insurance application submitted by customers.
+    info_list: Represents the auto insurance application submitted by customers.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - insurance_application_id
+      name: AgentAssignmentList
+      resource: AgentAssignment
+    - direction: tomany
+      fks:
+      - insurance_application_id
+      name: PolicyList
+      resource: Policy
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: InsuranceApplication
+    user_key: id
+  Policy:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: insurance_application_id
+    - name: policy_number
+    - name: effective_date
+      required: true
+      type: DATE
+    - name: expiration_date
+      required: true
+      type: DATE
+    description: Represents an insurance policy associated with an application.
+    info_list: Represents an insurance policy associated with an application.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - policy_id
+      name: ClaimList
+      resource: Claim
+    - direction: tomany
+      fks:
+      - policy_id
+      name: CoverageList
+      resource: Coverage
+    - direction: tomany
+      fks:
+      - policy_id
+      name: PremiumList
+      resource: Premium
+    - direction: toone
+      fks:
+      - insurance_application_id
+      name: insurance_application
+      resource: InsuranceApplication
+    type: Policy
+    user_key: id
+  Premium:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: policy_id
+    - name: amount
+      required: true
+    - name: due_date
+      required: true
+      type: DATE
+    description: Represents the premium details associated with a policy.
+    info_list: Represents the premium details associated with a policy.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - premium_id
+      name: BillingList
+      resource: Billing
+    - direction: toone
+      fks:
+      - policy_id
+      name: policy
+      resource: Policy
+    type: Premium
+    user_key: id
+  Vehicle:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+    - name: make
+      required: true
+    - name: model
+      required: true
+    - name: year
+      required: true
+    description: Represents a vehicle owned by a customer eligible for insurance.
+    info_list: Represents a vehicle owned by a customer eligible for insurance.
+    tab_groups:
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: Vehicle
+    user_key: id
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: OntimizeEE
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

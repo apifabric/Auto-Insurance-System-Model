@@ -1,0 +1,274 @@
+{
+    "models": [
+        {
+            "classname": "InsuranceApplication",
+            "code": "class InsuranceApplication(Base):\n    __tablename__ = 'insurance_application'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    application_date = Column(Date, nullable=False)\n    status = Column(String, nullable=False)\n    customer_id = Column(Integer, ForeignKey('customer.id'))",
+            "description": "Represents the auto insurance application submitted by customers.",
+            "name": "Insurance Application"
+        },
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    __tablename__ = 'customer'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    first_name = Column(String, nullable=False)\n    last_name = Column(String, nullable=False)\n    birthdate = Column(Date, nullable=True)\n    email = Column(String, nullable=True)",
+            "description": "Represents a customer who can apply for auto insurance.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Vehicle",
+            "code": "class Vehicle(Base):\n    __tablename__ = 'vehicle'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    make = Column(String, nullable=False)\n    model = Column(String, nullable=False)\n    year = Column(Integer, nullable=False)\n    customer_id = Column(Integer, ForeignKey('customer.id'))",
+            "description": "Represents a vehicle owned by a customer eligible for insurance.",
+            "name": "Vehicle"
+        },
+        {
+            "classname": "Policy",
+            "code": "class Policy(Base):\n    __tablename__ = 'policy'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    policy_number = Column(String, nullable=True)\n    effective_date = Column(Date, nullable=False)\n    expiration_date = Column(Date, nullable=False)\n    insurance_application_id = Column(Integer, ForeignKey('insurance_application.id'))",
+            "description": "Represents an insurance policy associated with an application.",
+            "name": "Policy"
+        },
+        {
+            "classname": "Premium",
+            "code": "class Premium(Base):\n    __tablename__ = 'premium'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    amount = Column(Integer, nullable=False)\n    due_date = Column(Date, nullable=False)\n    policy_id = Column(Integer, ForeignKey('policy.id'))",
+            "description": "Represents the premium details associated with a policy.",
+            "name": "Premium"
+        },
+        {
+            "classname": "Claim",
+            "code": "class Claim(Base):\n    __tablename__ = 'claim'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    claim_date = Column(Date, nullable=False)\n    description = Column(String, nullable=True)\n    status = Column(String, nullable=False)\n    policy_id = Column(Integer, ForeignKey('policy.id'))",
+            "description": "Represents a claim made against a policy.",
+            "name": "Claim"
+        },
+        {
+            "classname": "Agent",
+            "code": "class Agent(Base):\n    __tablename__ = 'agent'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    first_name = Column(String, nullable=False)\n    last_name = Column(String, nullable=False)",
+            "description": "Represents an insurance agent who manages applications and policies.",
+            "name": "Agent"
+        },
+        {
+            "classname": "AgentAssignment",
+            "code": "class AgentAssignment(Base):\n    __tablename__ = 'agent_assignment'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    assignment_date = Column(Date, nullable=False)\n    agent_id = Column(Integer, ForeignKey('agent.id'))\n    insurance_application_id = Column(Integer, ForeignKey('insurance_application.id'))",
+            "description": "Represents the assignment of agents to specific insurance applications.",
+            "name": "Agent Assignment"
+        },
+        {
+            "classname": "Coverage",
+            "code": "class Coverage(Base):\n    __tablename__ = 'coverage'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    type = Column(String, nullable=False)\n    limit = Column(Integer, nullable=False)\n    deductible = Column(Integer, nullable=True)\n    policy_id = Column(Integer, ForeignKey('policy.id'))",
+            "description": "Represents insurance coverage details included in a policy.",
+            "name": "Coverage"
+        },
+        {
+            "classname": "Incident",
+            "code": "class Incident(Base):\n    __tablename__ = 'incident'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    incident_date = Column(Date, nullable=False)\n    description = Column(String, nullable=True)",
+            "description": "Represents an incident for which an insurance claim can be made.",
+            "name": "Incident"
+        },
+        {
+            "classname": "IncidentReport",
+            "code": "class IncidentReport(Base):\n    __tablename__ = 'incident_report'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    report_date = Column(Date, nullable=False)\n    incident_id = Column(Integer, ForeignKey('incident.id'))\n    claimant_id = Column(Integer, ForeignKey('customer.id'))",
+            "description": "A report filed for an associated incident.",
+            "name": "Incident Report"
+        },
+        {
+            "classname": "Billing",
+            "code": "class Billing(Base):\n    __tablename__ = 'billing'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    billing_date = Column(Date, nullable=False)\n    amount_due = Column(Integer, nullable=False)\n    premium_id = Column(Integer, ForeignKey('premium.id'))",
+            "description": "Details regarding billing associated with a premium.",
+            "name": "Billing"
+        }
+    ],
+    "rules": [],
+    "test_data": "    from datetime import date\n    \n    insurance_application_1 = InsuranceApplication(id=1, application_date=date(2023, 1, 15), status=\"Pending\", customer_id=1)\n    insurance_application_2 = InsuranceApplication(id=2, application_date=date(2023, 2, 18), status=\"Approved\", customer_id=2)\n    insurance_application_3 = InsuranceApplication(id=3, application_date=date(2023, 3, 20), status=\"Denied\", customer_id=3)\n    insurance_application_4 = InsuranceApplication(id=4, application_date=date(2023, 4, 25), status=\"Pending\", customer_id=4)\n    \n    customer_1 = Customer(id=1, first_name=\"John\", last_name=\"Doe\", birthdate=date(1985, 5, 20), email=\"johndoe@example.com\")\n    customer_2 = Customer(id=2, first_name=\"Jane\", last_name=\"Smith\", birthdate=date(1990, 12, 10), email=\"janesmith@example.com\")\n    customer_3 = Customer(id=3, first_name=\"Bill\", last_name=\"Jones\", birthdate=date(1975, 3, 5), email=\"billjones@example.com\")\n    customer_4 = Customer(id=4, first_name=\"Susan\", last_name=\"Anderson\", birthdate=date(1982, 7, 22), email=\"susananderson@example.com\")\n    \n    vehicle_1 = Vehicle(id=1, make='Toyota', model='Camry', year=2018, customer_id=1)\n    vehicle_2 = Vehicle(id=2, make='Ford', model='Fusion', year=2020, customer_id=2)\n    vehicle_3 = Vehicle(id=3, make='Honda', model='Civic', year=2019, customer_id=3)\n    vehicle_4 = Vehicle(id=4, make='Chevy', model='Malibu', year=2022, customer_id=1)\n    \n    policy_1 = Policy(id=1, policy_number=\"POL1234\", effective_date=date(2023, 5, 1), expiration_date=date(2024, 5, 1), insurance_application_id=1)\n    policy_2 = Policy(id=2, policy_number=\"POL5678\", effective_date=date(2023, 6, 1), expiration_date=date(2024, 6, 1), insurance_application_id=2)\n    policy_3 = Policy(id=3, policy_number=\"POL9101\", effective_date=date(2023, 7, 1), expiration_date=date(2024, 7, 1), insurance_application_id=3)\n    policy_4 = Policy(id=4, policy_number=\"POL1121\", effective_date=date(2023, 8, 1), expiration_date=date(2024, 8, 1), insurance_application_id=4)\n    \n    premium_1 = Premium(id=1, amount=500, due_date=date(2023, 5, 31), policy_id=1)\n    premium_2 = Premium(id=2, amount=550, due_date=date(2023, 6, 30), policy_id=2)\n    premium_3 = Premium(id=3, amount=600, due_date=date(2023, 7, 31), policy_id=3)\n    premium_4 = Premium(id=4, amount=580, due_date=date(2023, 8, 31), policy_id=4)\n    \n    claim_1 = Claim(id=1, claim_date=date(2023, 5, 15), description=\"Rear-end collision\", status=\"Open\", policy_id=1)\n    claim_2 = Claim(id=2, claim_date=date(2023, 6, 10), description=\"Windshield damage\", status=\"Closed\", policy_id=2)\n    claim_3 = Claim(id=3, claim_date=date(2023, 7, 5), description=\"Theft\", status=\"Open\", policy_id=3)\n    claim_4 = Claim(id=4, claim_date=date(2023, 8, 1), description=\"Vandalism\", status=\"Open\", policy_id=1)\n    \n    agent_1 = Agent(id=1, first_name=\"Tom\", last_name=\"Harris\")\n    agent_2 = Agent(id=2, first_name=\"Amy\", last_name=\"Johnson\")\n    agent_3 = Agent(id=3, first_name=\"Steve\", last_name=\"Baker\")\n    agent_4 = Agent(id=4, first_name=\"Laura\", last_name=\"Hill\")\n    \n    agent_assignment_1 = AgentAssignment(id=1, assignment_date=date(2023, 1, 16), agent_id=1, insurance_application_id=1)\n    agent_assignment_2 = AgentAssignment(id=2, assignment_date=date(2023, 2, 19), agent_id=2, insurance_application_id=2)\n    agent_assignment_3 = AgentAssignment(id=3, assignment_date=date(2023, 3, 21), agent_id=3, insurance_application_id=3)\n    agent_assignment_4 = AgentAssignment(id=4, assignment_date=date(2023, 4, 26), agent_id=4, insurance_application_id=4)\n    \n    coverage_1 = Coverage(id=1, type=\"Collision\", limit=5000, deductible=500, policy_id=1)\n    coverage_2 = Coverage(id=2, type=\"Comprehensive\", limit=6000, deductible=500, policy_id=2)\n    coverage_3 = Coverage(id=3, type=\"Liability\", limit=10000, deductible=1000, policy_id=3)\n    coverage_4 = Coverage(id=4, type=\"Uninsured Motorist\", limit=7500, deductible=750, policy_id=4)\n    \n    incident_1 = Incident(id=1, incident_date=date(2023, 5, 9), description=\"Minor accident\")\n    incident_2 = Incident(id=2, incident_date=date(2023, 6, 11), description=\"Major accident\")\n    incident_3 = Incident(id=3, incident_date=date(2023, 7, 14), description=\"Natural disaster\")\n    incident_4 = Incident(id=4, incident_date=date(2023, 8, 18), description=\"Fender bender\")\n    \n    incident_report_1 = IncidentReport(id=1, report_date=date(2023, 5, 10), incident_id=1, claimant_id=1)\n    incident_report_2 = IncidentReport(id=2, report_date=date(2023, 6, 12), incident_id=2, claimant_id=2)\n    incident_report_3 = IncidentReport(id=3, report_date=date(2023, 7, 15), incident_id=3, claimant_id=3)\n    incident_report_4 = IncidentReport(id=4, report_date=date(2023, 8, 19), incident_id=4, claimant_id=4)\n    \n    billing_1 = Billing(id=1, billing_date=date(2023, 5, 1), amount_due=495, premium_id=1)\n    billing_2 = Billing(id=2, billing_date=date(2023, 6, 1), amount_due=540, premium_id=2)\n    billing_3 = Billing(id=3, billing_date=date(2023, 7, 1), amount_due=590, premium_id=3)\n    billing_4 = Billing(id=4, billing_date=date(2023, 8, 1), amount_due=570, premium_id=4)",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "insurance_application_1",
+            "code": "InsuranceApplication(id=1, application_date=date(2023, 1, 15), status=\"Pending\", customer_id=1)"
+        },
+        {
+            "test_data_row_variable": "insurance_application_2",
+            "code": "InsuranceApplication(id=2, application_date=date(2023, 2, 18), status=\"Approved\", customer_id=2)"
+        },
+        {
+            "test_data_row_variable": "insurance_application_3",
+            "code": "InsuranceApplication(id=3, application_date=date(2023, 3, 20), status=\"Denied\", customer_id=3)"
+        },
+        {
+            "test_data_row_variable": "insurance_application_4",
+            "code": "InsuranceApplication(id=4, application_date=date(2023, 4, 25), status=\"Pending\", customer_id=4)"
+        },
+        {
+            "test_data_row_variable": "customer_1",
+            "code": "Customer(id=1, first_name=\"John\", last_name=\"Doe\", birthdate=date(1985, 5, 20), email=\"johndoe@example.com\")"
+        },
+        {
+            "test_data_row_variable": "customer_2",
+            "code": "Customer(id=2, first_name=\"Jane\", last_name=\"Smith\", birthdate=date(1990, 12, 10), email=\"janesmith@example.com\")"
+        },
+        {
+            "test_data_row_variable": "customer_3",
+            "code": "Customer(id=3, first_name=\"Bill\", last_name=\"Jones\", birthdate=date(1975, 3, 5), email=\"billjones@example.com\")"
+        },
+        {
+            "test_data_row_variable": "customer_4",
+            "code": "Customer(id=4, first_name=\"Susan\", last_name=\"Anderson\", birthdate=date(1982, 7, 22), email=\"susananderson@example.com\")"
+        },
+        {
+            "test_data_row_variable": "vehicle_1",
+            "code": "Vehicle(id=1, make='Toyota', model='Camry', year=2018, customer_id=1)"
+        },
+        {
+            "test_data_row_variable": "vehicle_2",
+            "code": "Vehicle(id=2, make='Ford', model='Fusion', year=2020, customer_id=2)"
+        },
+        {
+            "test_data_row_variable": "vehicle_3",
+            "code": "Vehicle(id=3, make='Honda', model='Civic', year=2019, customer_id=3)"
+        },
+        {
+            "test_data_row_variable": "vehicle_4",
+            "code": "Vehicle(id=4, make='Chevy', model='Malibu', year=2022, customer_id=1)"
+        },
+        {
+            "test_data_row_variable": "policy_1",
+            "code": "Policy(id=1, policy_number=\"POL1234\", effective_date=date(2023, 5, 1), expiration_date=date(2024, 5, 1), insurance_application_id=1)"
+        },
+        {
+            "test_data_row_variable": "policy_2",
+            "code": "Policy(id=2, policy_number=\"POL5678\", effective_date=date(2023, 6, 1), expiration_date=date(2024, 6, 1), insurance_application_id=2)"
+        },
+        {
+            "test_data_row_variable": "policy_3",
+            "code": "Policy(id=3, policy_number=\"POL9101\", effective_date=date(2023, 7, 1), expiration_date=date(2024, 7, 1), insurance_application_id=3)"
+        },
+        {
+            "test_data_row_variable": "policy_4",
+            "code": "Policy(id=4, policy_number=\"POL1121\", effective_date=date(2023, 8, 1), expiration_date=date(2024, 8, 1), insurance_application_id=4)"
+        },
+        {
+            "test_data_row_variable": "premium_1",
+            "code": "Premium(id=1, amount=500, due_date=date(2023, 5, 31), policy_id=1)"
+        },
+        {
+            "test_data_row_variable": "premium_2",
+            "code": "Premium(id=2, amount=550, due_date=date(2023, 6, 30), policy_id=2)"
+        },
+        {
+            "test_data_row_variable": "premium_3",
+            "code": "Premium(id=3, amount=600, due_date=date(2023, 7, 31), policy_id=3)"
+        },
+        {
+            "test_data_row_variable": "premium_4",
+            "code": "Premium(id=4, amount=580, due_date=date(2023, 8, 31), policy_id=4)"
+        },
+        {
+            "test_data_row_variable": "claim_1",
+            "code": "Claim(id=1, claim_date=date(2023, 5, 15), description=\"Rear-end collision\", status=\"Open\", policy_id=1)"
+        },
+        {
+            "test_data_row_variable": "claim_2",
+            "code": "Claim(id=2, claim_date=date(2023, 6, 10), description=\"Windshield damage\", status=\"Closed\", policy_id=2)"
+        },
+        {
+            "test_data_row_variable": "claim_3",
+            "code": "Claim(id=3, claim_date=date(2023, 7, 5), description=\"Theft\", status=\"Open\", policy_id=3)"
+        },
+        {
+            "test_data_row_variable": "claim_4",
+            "code": "Claim(id=4, claim_date=date(2023, 8, 1), description=\"Vandalism\", status=\"Open\", policy_id=1)"
+        },
+        {
+            "test_data_row_variable": "agent_1",
+            "code": "Agent(id=1, first_name=\"Tom\", last_name=\"Harris\")"
+        },
+        {
+            "test_data_row_variable": "agent_2",
+            "code": "Agent(id=2, first_name=\"Amy\", last_name=\"Johnson\")"
+        },
+        {
+            "test_data_row_variable": "agent_3",
+            "code": "Agent(id=3, first_name=\"Steve\", last_name=\"Baker\")"
+        },
+        {
+            "test_data_row_variable": "agent_4",
+            "code": "Agent(id=4, first_name=\"Laura\", last_name=\"Hill\")"
+        },
+        {
+            "test_data_row_variable": "agent_assignment_1",
+            "code": "AgentAssignment(id=1, assignment_date=date(2023, 1, 16), agent_id=1, insurance_application_id=1)"
+        },
+        {
+            "test_data_row_variable": "agent_assignment_2",
+            "code": "AgentAssignment(id=2, assignment_date=date(2023, 2, 19), agent_id=2, insurance_application_id=2)"
+        },
+        {
+            "test_data_row_variable": "agent_assignment_3",
+            "code": "AgentAssignment(id=3, assignment_date=date(2023, 3, 21), agent_id=3, insurance_application_id=3)"
+        },
+        {
+            "test_data_row_variable": "agent_assignment_4",
+            "code": "AgentAssignment(id=4, assignment_date=date(2023, 4, 26), agent_id=4, insurance_application_id=4)"
+        },
+        {
+            "test_data_row_variable": "coverage_1",
+            "code": "Coverage(id=1, type=\"Collision\", limit=5000, deductible=500, policy_id=1)"
+        },
+        {
+            "test_data_row_variable": "coverage_2",
+            "code": "Coverage(id=2, type=\"Comprehensive\", limit=6000, deductible=500, policy_id=2)"
+        },
+        {
+            "test_data_row_variable": "coverage_3",
+            "code": "Coverage(id=3, type=\"Liability\", limit=10000, deductible=1000, policy_id=3)"
+        },
+        {
+            "test_data_row_variable": "coverage_4",
+            "code": "Coverage(id=4, type=\"Uninsured Motorist\", limit=7500, deductible=750, policy_id=4)"
+        },
+        {
+            "test_data_row_variable": "incident_1",
+            "code": "Incident(id=1, incident_date=date(2023, 5, 9), description=\"Minor accident\")"
+        },
+        {
+            "test_data_row_variable": "incident_2",
+            "code": "Incident(id=2, incident_date=date(2023, 6, 11), description=\"Major accident\")"
+        },
+        {
+            "test_data_row_variable": "incident_3",
+            "code": "Incident(id=3, incident_date=date(2023, 7, 14), description=\"Natural disaster\")"
+        },
+        {
+            "test_data_row_variable": "incident_4",
+            "code": "Incident(id=4, incident_date=date(2023, 8, 18), description=\"Fender bender\")"
+        },
+        {
+            "test_data_row_variable": "incident_report_1",
+            "code": "IncidentReport(id=1, report_date=date(2023, 5, 10), incident_id=1, claimant_id=1)"
+        },
+        {
+            "test_data_row_variable": "incident_report_2",
+            "code": "IncidentReport(id=2, report_date=date(2023, 6, 12), incident_id=2, claimant_id=2)"
+        },
+        {
+            "test_data_row_variable": "incident_report_3",
+            "code": "IncidentReport(id=3, report_date=date(2023, 7, 15), incident_id=3, claimant_id=3)"
+        },
+        {
+            "test_data_row_variable": "incident_report_4",
+            "code": "IncidentReport(id=4, report_date=date(2023, 8, 19), incident_id=4, claimant_id=4)"
+        },
+        {
+            "test_data_row_variable": "billing_1",
+            "code": "Billing(id=1, billing_date=date(2023, 5, 1), amount_due=495, premium_id=1)"
+        },
+        {
+            "test_data_row_variable": "billing_2",
+            "code": "Billing(id=2, billing_date=date(2023, 6, 1), amount_due=540, premium_id=2)"
+        },
+        {
+            "test_data_row_variable": "billing_3",
+            "code": "Billing(id=3, billing_date=date(2023, 7, 1), amount_due=590, premium_id=3)"
+        },
+        {
+            "test_data_row_variable": "billing_4",
+            "code": "Billing(id=4, billing_date=date(2023, 8, 1), amount_due=570, premium_id=4)"
+        }
+    ],
+    "test_data_sqlite": "",
+    "name": "Auto_Insurance_System_Model"
+}

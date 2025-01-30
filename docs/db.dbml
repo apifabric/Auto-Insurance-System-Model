@@ -1,0 +1,122 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Project DBML {
+  Note: '''
+Agent: Represents an insurance agent who manages applications and policies.
+AgentAssignment: Represents the assignment of agents to specific insurance applications.
+InsuranceApplication: Represents the auto insurance application submitted by customers.
+Billing: Details regarding billing associated with a premium.
+Premium: Represents the premium details associated with a policy.
+Claim: Represents a claim made against a policy.
+Policy: Represents an insurance policy associated with an application.
+Coverage: Represents insurance coverage details included in a policy.
+Customer: Represents a customer who can apply for auto insurance.
+Incident: Represents an incident for which an insurance claim can be made.
+IncidentReport: A report filed for an associated incident.
+Vehicle: Represents a vehicle owned by a customer eligible for insurance.
+'''
+}
+
+Table Agent {
+    id INTEGER [primary key]
+    first_name VARCHAR 
+    last_name VARCHAR 
+    }
+
+Table AgentAssignment {
+    id INTEGER [primary key]
+    assignment_date DATE 
+    agent_id INTEGER 
+    insurance_application_id INTEGER 
+    }
+
+Table InsuranceApplication {
+    id INTEGER [primary key]
+    application_date DATE 
+    status VARCHAR 
+    customer_id INTEGER 
+    }
+
+Table Billing {
+    id INTEGER [primary key]
+    billing_date DATE 
+    amount_due INTEGER 
+    premium_id INTEGER 
+    }
+
+Table Premium {
+    id INTEGER [primary key]
+    amount INTEGER 
+    due_date DATE 
+    policy_id INTEGER 
+    }
+
+Table Claim {
+    id INTEGER [primary key]
+    claim_date DATE 
+    description VARCHAR 
+    status VARCHAR 
+    policy_id INTEGER 
+    }
+
+Table Policy {
+    id INTEGER [primary key]
+    policy_number VARCHAR 
+    effective_date DATE 
+    expiration_date DATE 
+    insurance_application_id INTEGER 
+    }
+
+Table Coverage {
+    id INTEGER [primary key]
+    Type VARCHAR 
+    limit INTEGER 
+    deductible INTEGER 
+    policy_id INTEGER 
+    }
+
+Table Customer {
+    id INTEGER [primary key]
+    first_name VARCHAR 
+    last_name VARCHAR 
+    birthdate DATE 
+    email VARCHAR 
+    }
+
+Table Incident {
+    id INTEGER [primary key]
+    incident_date DATE 
+    description VARCHAR 
+    }
+
+Table IncidentReport {
+    id INTEGER [primary key]
+    report_date DATE 
+    incident_id INTEGER 
+    claimant_id INTEGER 
+    }
+
+Table Vehicle {
+    id INTEGER [primary key]
+    make VARCHAR 
+    model VARCHAR 
+    year INTEGER 
+    customer_id INTEGER 
+    }
+
+
+
+// Relationships
+    Ref: AgentAssignment.(agent_id) < Agent.(id)
+    Ref: AgentAssignment.(insurance_application_id) < InsuranceApplication.(id)
+    Ref: InsuranceApplication.(customer_id) < Customer.(id)
+    Ref: Billing.(premium_id) < Premium.(id)
+    Ref: Premium.(policy_id) < Policy.(id)
+    Ref: Claim.(policy_id) < Policy.(id)
+    Ref: Policy.(insurance_application_id) < InsuranceApplication.(id)
+    Ref: Coverage.(policy_id) < Policy.(id)
+    Ref: IncidentReport.(claimant_id) < Customer.(id)
+    Ref: IncidentReport.(incident_id) < Incident.(id)
+    Ref: Vehicle.(customer_id) < Customer.(id)
