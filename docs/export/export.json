@@ -1,0 +1,53 @@
+{
+    "rules": [],
+    "models": [
+        {
+            "classname": "Agent",
+            "code": "class Agent(Base):  # type: ignore\n    \"\"\"\n    description: Represents an insurance agent who manages applications and policies.\n    \"\"\"\n    __tablename__ = 'agent'\n    _s_collection_name = 'Agent'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    first_name = Column(String, nullable=False)\n    last_name = Column(String, nullable=False)\n\n    # parent relationships (access parent)\n\n    # child relationships (access children)\n    AgentAssignmentList : Mapped[List[\"AgentAssignment\"]] = relationship(back_populates=\"agent\")"
+        },
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):  # type: ignore\n    \"\"\"\n    description: Represents a customer who can apply for auto insurance.\n    \"\"\"\n    __tablename__ = 'customer'\n    _s_collection_name = 'Customer'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    first_name = Column(String, nullable=False)\n    last_name = Column(String, nullable=False)\n    birthdate = Column(Date)\n    email = Column(String)\n\n    # parent relationships (access parent)\n\n    # child relationships (access children)\n    IncidentReportList : Mapped[List[\"IncidentReport\"]] = relationship(back_populates=\"claimant\")\n    InsuranceApplicationList : Mapped[List[\"InsuranceApplication\"]] = relationship(back_populates=\"customer\")\n    VehicleList : Mapped[List[\"Vehicle\"]] = relationship(back_populates=\"customer\")"
+        },
+        {
+            "classname": "Incident",
+            "code": "class Incident(Base):  # type: ignore\n    \"\"\"\n    description: Represents an incident for which an insurance claim can be made.\n    \"\"\"\n    __tablename__ = 'incident'\n    _s_collection_name = 'Incident'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    incident_date = Column(Date, nullable=False)\n    description = Column(String)\n\n    # parent relationships (access parent)\n\n    # child relationships (access children)\n    IncidentReportList : Mapped[List[\"IncidentReport\"]] = relationship(back_populates=\"incident\")"
+        },
+        {
+            "classname": "IncidentReport",
+            "code": "class IncidentReport(Base):  # type: ignore\n    \"\"\"\n    description: A report filed for an associated incident.\n    \"\"\"\n    __tablename__ = 'incident_report'\n    _s_collection_name = 'IncidentReport'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    report_date = Column(Date, nullable=False)\n    incident_id = Column(ForeignKey('incident.id'))\n    claimant_id = Column(ForeignKey('customer.id'))\n\n    # parent relationships (access parent)\n    claimant : Mapped[\"Customer\"] = relationship(back_populates=(\"IncidentReportList\"))\n    incident : Mapped[\"Incident\"] = relationship(back_populates=(\"IncidentReportList\"))"
+        },
+        {
+            "classname": "InsuranceApplication",
+            "code": "class InsuranceApplication(Base):  # type: ignore\n    \"\"\"\n    description: Represents the auto insurance application submitted by customers.\n    \"\"\"\n    __tablename__ = 'insurance_application'\n    _s_collection_name = 'InsuranceApplication'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    application_date = Column(Date, nullable=False)\n    status = Column(String, nullable=False)\n    customer_id = Column(ForeignKey('customer.id'))\n\n    # parent relationships (access parent)\n    customer : Mapped[\"Customer\"] = relationship(back_populates=(\"InsuranceApplicationList\"))\n\n    # child relationships (access children)\n    AgentAssignmentList : Mapped[List[\"AgentAssignment\"]] = relationship(back_populates=\"insurance_application\")\n    PolicyList : Mapped[List[\"Policy\"]] = relationship(back_populates=\"insurance_application\")"
+        },
+        {
+            "classname": "Vehicle",
+            "code": "class Vehicle(Base):  # type: ignore\n    \"\"\"\n    description: Represents a vehicle owned by a customer eligible for insurance.\n    \"\"\"\n    __tablename__ = 'vehicle'\n    _s_collection_name = 'Vehicle'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    make = Column(String, nullable=False)\n    model = Column(String, nullable=False)\n    year = Column(Integer, nullable=False)\n    customer_id = Column(ForeignKey('customer.id'))\n\n    # parent relationships (access parent)\n    customer : Mapped[\"Customer\"] = relationship(back_populates=(\"VehicleList\"))"
+        },
+        {
+            "classname": "AgentAssignment",
+            "code": "class AgentAssignment(Base):  # type: ignore\n    \"\"\"\n    description: Represents the assignment of agents to specific insurance applications.\n    \"\"\"\n    __tablename__ = 'agent_assignment'\n    _s_collection_name = 'AgentAssignment'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    assignment_date = Column(Date, nullable=False)\n    agent_id = Column(ForeignKey('agent.id'))\n    insurance_application_id = Column(ForeignKey('insurance_application.id'))\n\n    # parent relationships (access parent)\n    agent : Mapped[\"Agent\"] = relationship(back_populates=(\"AgentAssignmentList\"))\n    insurance_application : Mapped[\"InsuranceApplication\"] = relationship(back_populates=(\"AgentAssignmentList\"))"
+        },
+        {
+            "classname": "Policy",
+            "code": "class Policy(Base):  # type: ignore\n    \"\"\"\n    description: Represents an insurance policy associated with an application.\n    \"\"\"\n    __tablename__ = 'policy'\n    _s_collection_name = 'Policy'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    policy_number = Column(String)\n    effective_date = Column(Date, nullable=False)\n    expiration_date = Column(Date, nullable=False)\n    insurance_application_id = Column(ForeignKey('insurance_application.id'))\n\n    # parent relationships (access parent)\n    insurance_application : Mapped[\"InsuranceApplication\"] = relationship(back_populates=(\"PolicyList\"))\n\n    # child relationships (access children)\n    ClaimList : Mapped[List[\"Claim\"]] = relationship(back_populates=\"policy\")\n    CoverageList : Mapped[List[\"Coverage\"]] = relationship(back_populates=\"policy\")\n    PremiumList : Mapped[List[\"Premium\"]] = relationship(back_populates=\"policy\")"
+        },
+        {
+            "classname": "Claim",
+            "code": "class Claim(Base):  # type: ignore\n    \"\"\"\n    description: Represents a claim made against a policy.\n    \"\"\"\n    __tablename__ = 'claim'\n    _s_collection_name = 'Claim'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    claim_date = Column(Date, nullable=False)\n    description = Column(String)\n    status = Column(String, nullable=False)\n    policy_id = Column(ForeignKey('policy.id'))\n\n    # parent relationships (access parent)\n    policy : Mapped[\"Policy\"] = relationship(back_populates=(\"ClaimList\"))"
+        },
+        {
+            "classname": "Coverage",
+            "code": "class Coverage(Base):  # type: ignore\n    \"\"\"\n    description: Represents insurance coverage details included in a policy.\n    \"\"\"\n    __tablename__ = 'coverage'\n    _s_collection_name = 'Coverage'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    type = Column(String, nullable=False)\n    limit = Column(Integer, nullable=False)\n    deductible = Column(Integer)\n    policy_id = Column(ForeignKey('policy.id'))\n\n    # parent relationships (access parent)\n    policy : Mapped[\"Policy\"] = relationship(back_populates=(\"CoverageList\"))"
+        },
+        {
+            "classname": "Premium",
+            "code": "class Premium(Base):  # type: ignore\n    \"\"\"\n    description: Represents the premium details associated with a policy.\n    \"\"\"\n    __tablename__ = 'premium'\n    _s_collection_name = 'Premium'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    amount = Column(Integer, nullable=False)\n    due_date = Column(Date, nullable=False)\n    policy_id = Column(ForeignKey('policy.id'))\n\n    # parent relationships (access parent)\n    policy : Mapped[\"Policy\"] = relationship(back_populates=(\"PremiumList\"))\n\n    # child relationships (access children)\n    BillingList : Mapped[List[\"Billing\"]] = relationship(back_populates=\"premium\")"
+        },
+        {
+            "classname": "Billing",
+            "code": "class Billing(Base):  # type: ignore\n    \"\"\"\n    description: Details regarding billing associated with a premium.\n    \"\"\"\n    __tablename__ = 'billing'\n    _s_collection_name = 'Billing'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    billing_date = Column(Date, nullable=False)\n    amount_due = Column(Integer, nullable=False)\n    premium_id = Column(ForeignKey('premium.id'))\n\n    # parent relationships (access parent)\n    premium : Mapped[\"Premium\"] = relationship(back_populates=(\"BillingList\"))"
+        }
+    ]
+}
